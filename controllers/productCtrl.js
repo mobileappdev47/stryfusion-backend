@@ -15,48 +15,66 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-const createProduct = asyncHandler(async (req, res) => {
+const createProduct = async (req, res) => {
     try {
-        const { mainTitle, mainDescription, products } = req.body;
+        const { productTitle } = req.body;
 
-        // Check if products exist and if it's an array
-        if (!Array.isArray(products)) {
-            return res.status(400).json({ message: "Products must be an array" });
+        // Check if required fields are present
+        if (!productTitle || !req.file) {
+            return res.status(400).json({ success: false, error: "Product title and image are required" });
         }
 
-        const newProducts = products.map(product => ({
-            productTitle: product.productTitle,
-            productImage: product.productImage // Assuming Multer saves the file path in productImage
-        }));
+        const productImage = req.file.path;
 
-        const newProduct = new Products({
-            mainTitle,
-            mainDescription,
-            products: newProducts
+        // Create the product
+        const product = await Products.create({
+            productTitle,
+            productImage
         });
 
-        const savedProduct = await newProduct.save();
-        res.json(savedProduct);
+        res.status(201).json({ success: true, data: product });
     } catch (err) {
-        res.status(400).json({ message: err.message });
+        console.error("Error:", err);
+        res.status(400).json({ success: false, error: err.message });
     }
-});
+};
 
 const updateProduct = async (req, res) => {
     try {
-        const { mainTitle, mainDescription, products } = req.body;
-        const updatedProduct = {
-            mainTitle,
-            mainDescription,
-            products: [{
-                productTitle: products[0].productTitle,
-                productImage: req.file ? req.file.path : products[0].productImage
-            }]
-        };
-        const updatedProductResult = await Products.findByIdAndUpdate(req.params.id, updatedProduct, { new: true });
-        res.json(updatedProductResult);
+        const { productId } = req.params;
+        const { productTitle } = req.body;
+
+        // Check if required fields are present
+        if (!productTitle) {
+            return res.status(400).json({ success: false, error: "Product title is required" });
+        }
+
+        let updateFields = { productTitle };
+
+        // Check if a file was uploaded
+        if (req.file) {
+            // Construct the file path
+            const productImage = req.file.path;
+            updateFields.productImage = productImage;
+
+            // Delete old image
+            const oldProduct = await Products.findById(productId);
+            if (oldProduct && oldProduct.productImage) {
+                fs.unlinkSync(oldProduct.productImage);
+            }
+        }
+
+        // Update the product
+        const updatedProduct = await Products.findByIdAndUpdate(productId, updateFields, { new: true });
+
+        if (!updatedProduct) {
+            return res.status(404).json({ success: false, error: "Product not found" });
+        }
+
+        res.status(200).json({ success: true, data: updatedProduct });
     } catch (err) {
-        res.status(400).json({ message: err.message });
+        console.error("Error:", err);
+        res.status(400).json({ success: false, error: err.message });
     }
 };
 
@@ -64,17 +82,40 @@ const updateProduct = async (req, res) => {
 
 
 const getProduct = asyncHandler(async (req, res) => {
-    
+    try {
+        const products = await Products.find();
+        res.status(200).json({ success: true, data: products });
+    } catch (err) {
+        console.error("Error:", err);
+        res.status(500).json({ success: false, error: err.message });
+    }
 });
 
 
-
-
-
-
-
 const deleteProduct = asyncHandler(async (req, res) => {
-  
+    try {
+        const { productId } = req.params;
+
+        // Find the product to delete and get the image path
+        const productToDelete = await Products.findById(productId);
+        const imagePath = productToDelete.productImage;
+
+        const deletedProduct = await Products.findByIdAndDelete(productId);
+
+        if (!deletedProduct) {
+            return res.status(404).json({ success: false, error: "Product not found" });
+        }
+
+        // Delete the image file
+        if (imagePath) {
+            fs.unlinkSync(imagePath);
+        }
+
+        res.status(200).json({ success: true, data: {} });
+    } catch (err) {
+        console.error("Error:", err);
+        res.status(400).json({ success: false, error: err.message });
+    }
 });
 
 module.exports = { upload, createProduct, getProduct, updateProduct, deleteProduct };

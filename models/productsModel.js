@@ -1,24 +1,17 @@
 const mongoose = require("mongoose");
 
 const productsSchema = new mongoose.Schema({
-    mainTitle: {
+    productTitle: {
         type: String,
         required: true
     },
-    mainDescription: {
+    productDescription: {
+        type: String,
+    },
+    productImage: {
         type: String,
         required: true
-    },
-    products: [{
-        productTitle: {
-            type: String,
-            required: true
-        },
-        productImage: {
-            type: String,
-            required: true
-        }
-    }]
+    }
 },
     {
         timestamps: true

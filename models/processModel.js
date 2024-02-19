@@ -1,24 +1,16 @@
 const mongoose = require("mongoose");
 
 const processSchema = new mongoose.Schema({
-    mainTitle: {
+    title: {
         type: String,
     },
-    mainDescription: {
+    description: {
         type: String,
     },
-    processCard: [{
-        title: {
-            type: String,
-        },
-        description: {
-            type: String,
-        },
-        image: {
-            type: String,
-            // required: true
-        }
-    }]  
+    image: {
+        type: String,
+        // required: true
+    },
 },
     {
         timestamps: true

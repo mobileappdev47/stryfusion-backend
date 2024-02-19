@@ -4,10 +4,10 @@ const { upload, createProduct, getProduct, updateProduct, deleteProduct } = requ
 const router = express.Router();
 
 
-router.post('/', upload.array("products", 10), createProduct);
+router.post('/', upload.single("image"), createProduct);
 router.get('/', getProduct);
-router.put('/update/:id', upload.single("products[0][productImage]"), updateProduct);
-router.delete('/delete/:id', deleteProduct)
+router.put('/update/:productId', upload.single("image"), updateProduct);
+router.delete('/delete/:productId', deleteProduct)
 
 
 module.exports = router;    

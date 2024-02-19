@@ -1,32 +1,22 @@
 const mongoose = require("mongoose");
 
 const clientSchema = new mongoose.Schema({
-    mainTitle: {
+    clientImage: {
         type: String,
         required: true
     },
-    mainDescription: {
+    clientName: {
         type: String,
         required: true
     },
-    card: [{
-        clientImage: {
-            type: String,
-            required: true
-        },
-        clientName: {
-            type: String,
-            required: true
-        },
-        clientRole: {
-            type: String,
-            required: true
-        },
-        clientReview: {
-            type: String,
-            required: true
-        },
-    }]
+    clientRole: {
+        type: String,
+        required: true
+    },
+    clientReview: {
+        type: String,
+        required: true
+    },
 },
     {
         timestamps: true

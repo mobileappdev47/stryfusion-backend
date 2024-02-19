@@ -1,28 +1,17 @@
 const mongoose = require("mongoose");
 
 const experienceSchema = new mongoose.Schema({
-    mainTitle: {
+    experienceTitle: {
         type: String,
         required: true
     },
-    mainDescription: {
+    experienceDescription: {
         type: String,
         required: true
     },
-    card: [{
-        image: {
-            type: String,
-            required: true
-        },
-        cardTitle: {
-            type: String,
-            required: true
-        },
-        cardDescription: {
-            type: String,
-            required: true
-        },
-    }]
+    experienceImage: {
+        type: String,
+    }
 },
     {
         timestamps: true

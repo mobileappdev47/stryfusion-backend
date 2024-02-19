@@ -4,9 +4,9 @@ const { upload, createProcess, getProcess, updateProcess, deleteProcess } = requ
 const router = express.Router();
 
 
-router.post('/', upload.array('image'), createProcess);
+router.post('/', upload.single("image"), createProcess);
 router.get('/', getProcess);
-router.post('/update/:processId/:cardId', upload.single('image'), updateProcess);
-router.delete('/delete/:id', deleteProcess)
+router.put('/update/:processId', upload.single('image'), updateProcess);
+router.delete('/delete/:processId', deleteProcess)
 
 module.exports = router;    
