@@ -105,11 +105,10 @@ const deleteExperience = asyncHandler(async (req, res) => {
             return res.status(404).json({ success: false, error: "Experience not found" });
         }
 
-        // Delete the image file if it's not an SVG
-        if (imagePath && !imagePath.endsWith('.svg')) {
+        if (imagePath && (imagePath.endsWith('.svg') || imagePath.endsWith('.png') || imagePath.endsWith('.jpeg') || imagePath.endsWith('.jpg'))) {
             fs.unlinkSync(imagePath);
-        } else if (imagePath && imagePath.endsWith('.svg')) {
-            console.log('SVG file detected. Skipping deletion.'); // Or handle differently as needed
+        } else if (imagePath) {
+            console.log('Unsupported file format. Skipping deletion.');
         }
 
         res.status(200).json({ success: true, data: {} });
@@ -118,5 +117,6 @@ const deleteExperience = asyncHandler(async (req, res) => {
         res.status(400).json({ success: false, error: err.message });
     }
 });
+
 
 module.exports = {upload, createExperience, updateExperience, getAllExperiences, deleteExperience}
