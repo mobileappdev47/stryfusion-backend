@@ -97,7 +97,7 @@ const deleteExperience = asyncHandler(async (req, res) => {
 
         // Find the experience to delete and get the image path
         const experienceToDelete = await Experience.findById(experienceId);
-        const imagePath = experienceToDelete.experienceImage;
+        const imagePath = experienceToDelete?.experienceImage;
 
         const deletedExperience = await Experience.findByIdAndDelete(experienceId);
 
@@ -105,9 +105,11 @@ const deleteExperience = asyncHandler(async (req, res) => {
             return res.status(404).json({ success: false, error: "Experience not found" });
         }
 
-        // Delete the image file
-        if (imagePath) {
+        // Delete the image file if it's not an SVG
+        if (imagePath && !imagePath.endsWith('.svg')) {
             fs.unlinkSync(imagePath);
+        } else if (imagePath && imagePath.endsWith('.svg')) {
+            console.log('SVG file detected. Skipping deletion.'); // Or handle differently as needed
         }
 
         res.status(200).json({ success: true, data: {} });
