@@ -2,7 +2,6 @@ const asyncHandler = require('express-async-handler');
 const multer = require('multer');
 const Process = require('../models/processModel');
 const fs = require('fs');
-const path = require('path')
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -18,9 +17,6 @@ const storage = multer.diskStorage({
 
   const createProcess = async (req, res) => {
     try {
-        // Ensure NODE_ENV is properly set before accessing it
-        const isProduction = process.env.NODE_ENV === 'production';
-
         const { title, description } = req.body;
 
         // Check if required fields are present
@@ -31,14 +27,8 @@ const storage = multer.diskStorage({
         let imagePath = "";
         // Check if a file was uploaded
         if (req.file) {
-            // Construct the file path dynamically based on environment
-            if (isProduction) {
-                // For hosting server, construct the path properly
-                imagePath = path.join(__dirname, 'uploads', req.file.path);
-            } else {
-                // For local environment, use the provided path directly
-                imagePath = req.file.path;
-            }
+            // Construct the file path
+            imagePath = req.file.path;
         }
 
         // Create the process
