@@ -56,7 +56,7 @@ const updateBrandMain = asyncHandler(async (req, res) => {
 
 const getBrandsMain = asyncHandler(async (req, res) => {
     try {
-        const brands = await OurBrandMain.find();
+        const brands = await OurBrandMain.findOne();
         res.status(200).json({ success: true, data: brands });
     } catch (err) {
         console.error("Error:", err);

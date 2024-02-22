@@ -56,7 +56,7 @@ const updateProductMain = asyncHandler(async (req, res) => {
 
 const getProductMain = asyncHandler(async (req, res) => {
     try {
-        const product = await ProductMain.find(); // Retrieve the first product found in the database
+        const product = await ProductMain.findOne(); // Retrieve the first product found in the database
         if (!product) {
             return res.status(404).json({ success: false, error: "Product not found" });
         }

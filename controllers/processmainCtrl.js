@@ -62,7 +62,7 @@ const updateProcessMain = asyncHandler(async (req, res) => {
 
 const getProcessMain = asyncHandler(async (req, res) => {
     try {
-        const processes = await ProcessMain.find();
+        const processes = await ProcessMain.findOne();
         res.status(200).json({ success: true, data: processes });
     } catch (err) {
         console.error("Error:", err);

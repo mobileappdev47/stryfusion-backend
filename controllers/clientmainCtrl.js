@@ -62,7 +62,7 @@ const updateClientMain = asyncHandler(async (req, res) => {
 
 const getClientMain = asyncHandler(async (req, res) => {
     try {
-        const clients = await ClientMain.find();
+        const clients = await ClientMain.findOne();
         res.status(200).json({ success: true, data: clients });
     } catch (err) {
         console.error("Error:", err);

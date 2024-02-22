@@ -59,7 +59,7 @@ const updateExperienceMain = asyncHandler(async (req, res) => {
 
 const getExperienceMain = asyncHandler(async (req, res) => {
     try {
-        const experiences = await ExperienceMain.find();
+        const experiences = await ExperienceMain.findOne();
         res.status(200).json({ success: true, data: experiences });
     } catch (err) {
         console.error("Error:", err);

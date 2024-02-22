@@ -63,7 +63,7 @@ const updateLocationMain = asyncHandler(async (req, res) => {
 
 const getLocationMain = asyncHandler(async (req, res) => {
     try {
-        const locations = await LocationMain.find();
+        const locations = await LocationMain.findOne();
         res.status(200).json({ success: true, data: locations });
     } catch (err) {
         console.error("Error:", err);
