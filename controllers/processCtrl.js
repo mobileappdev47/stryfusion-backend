@@ -27,8 +27,14 @@ const storage = multer.diskStorage({
         let imagePath = "";
         // Check if a file was uploaded
         if (req.file) {
-            // Construct the file path
-            imagePath = req.file.path;
+            // Construct the file path dynamically based on environment
+            if (process.env.NODE_ENV === 'production') {
+                // For hosting server
+                imagePath = path.join(__dirname, req.file.path);
+            } else {
+                // For local environment
+                imagePath = req.file.path;
+            }
         }
 
         // Create the process
