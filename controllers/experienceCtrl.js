@@ -58,12 +58,6 @@ const updateExperience = asyncHandler(async (req, res) => {
             // Construct the file path
             const experienceImage = req.file.path;
             updateFields.experienceImage = experienceImage;
-
-            // Delete old image
-            const oldExperience = await Experience.findById(experienceId);
-            if (oldExperience && oldExperience.experienceImage) {
-                fs.unlinkSync(oldExperience.experienceImage);
-            }
         }
 
         // Update the experience
@@ -73,12 +67,19 @@ const updateExperience = asyncHandler(async (req, res) => {
             return res.status(404).json({ success: false, error: "Experience not found" });
         }
 
+        // Delete old image if it exists
+        const oldExperience = await Experience.findById(experienceId);
+        if (oldExperience && oldExperience.experienceImage) {
+            fs.unlinkSync(oldExperience.experienceImage);
+        }
+
         res.status(200).json({ success: true, data: updatedExperience });
     } catch (err) {
         console.error("Error:", err);
         res.status(400).json({ success: false, error: err.message });
     }
 });
+
 
 
 const getAllExperiences = asyncHandler(async (req, res) => {
@@ -105,10 +106,14 @@ const deleteExperience = asyncHandler(async (req, res) => {
             return res.status(404).json({ success: false, error: "Experience not found" });
         }
 
-        if (imagePath && (imagePath.endsWith('.svg') || imagePath.endsWith('.png') || imagePath.endsWith('.jpeg') || imagePath.endsWith('.jpg'))) {
-            fs.unlinkSync(imagePath);
-        } else if (imagePath) {
-            console.log('Unsupported file format. Skipping deletion.');
+        // Attempt to delete the image file
+        if (imagePath) {
+            try {
+                fs.unlinkSync(imagePath);
+                console.log('Image file deleted successfully.');
+            } catch (err) {
+                console.error('Error deleting image file:', err);
+            }
         }
 
         res.status(200).json({ success: true, data: {} });
@@ -117,6 +122,7 @@ const deleteExperience = asyncHandler(async (req, res) => {
         res.status(400).json({ success: false, error: err.message });
     }
 });
+
 
 
 module.exports = {upload, createExperience, updateExperience, getAllExperiences, deleteExperience}
