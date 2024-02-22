@@ -8,16 +8,11 @@ const createProductMain = asyncHandler(async (req, res) => {
     try {
         const { productTitle, productDescription } = req.body;
 
-        // Check if required fields are present
-        if (!productTitle) {
-            return res.status(400).json({ success: false, error: "Product title is required" });
-        }
-
-        // Check if product with the same title already exists
-        const existingProduct = await ProductMain.findOne({ productTitle });
+        // Check if any product already exists
+        const existingProduct = await ProductMain.findOne();
 
         if (existingProduct) {
-            return res.status(400).json({ success: false, error: "Product with this title already exists" });
+            return res.status(400).json({ success: false, error: "A product already exists, only one product can be created" });
         }
 
         // Create the product
@@ -61,8 +56,11 @@ const updateProductMain = asyncHandler(async (req, res) => {
 
 const getProductMain = asyncHandler(async (req, res) => {
     try {
-        const products = await ProductMain.find();
-        res.status(200).json({ success: true, data: products });
+        const product = await ProductMain.find(); // Retrieve the first product found in the database
+        if (!product) {
+            return res.status(404).json({ success: false, error: "Product not found" });
+        }
+        res.status(200).json({ success: true, data: product });
     } catch (err) {
         console.error("Error:", err);
         res.status(500).json({ success: false, error: err.message });

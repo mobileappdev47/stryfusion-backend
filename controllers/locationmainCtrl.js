@@ -8,16 +8,16 @@ const createLocationMain = asyncHandler(async (req, res) => {
     try {
         const { locationTitle, locationDescription } = req.body;
 
+        // Check if any location already exists
+        const existingLocation = await LocationMain.findOne();
+
+        if (existingLocation) {
+            return res.status(400).json({ success: false, error: "A location already exists, only one location can be created" });
+        }
+
         // Check if required fields are present
         if (!locationTitle) {
             return res.status(400).json({ success: false, error: "Location title is required" });
-        }
-
-        // Check if location with the same title already exists
-        const existingLocation = await LocationMain.findOne({ locationTitle });
-
-        if (existingLocation) {
-            return res.status(400).json({ success: false, error: "Location with this title already exists" });
         }
 
         // Create the location
@@ -32,6 +32,7 @@ const createLocationMain = asyncHandler(async (req, res) => {
         res.status(400).json({ success: false, error: err.message });
     }
 });
+
 
 
 const updateLocationMain = asyncHandler(async (req, res) => {

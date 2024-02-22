@@ -4,30 +4,31 @@ const OurBrandMain = require('../models/ourbrandmainModel');
 
 
 const createBrandMain = asyncHandler(async (req, res) => {
-    try {
-        const { brandTitle } = req.body;
+  try {
+      const { brandTitle } = req.body;
 
-        // Check if required fields are present
-        if (!brandTitle) {
-            return res.status(400).json({ success: false, error: "Brand title is required" });
-        }
+      // Check if any brand already exists
+      const existingBrand = await OurBrandMain.findOne();
 
-        // Check if brand with the same title already exists
-        const existingBrand = await OurBrandMain.findOne({ brandTitle });
+      if (existingBrand) {
+          return res.status(400).json({ success: false, error: "A brand already exists, only one brand can be created" });
+      }
 
-        if (existingBrand) {
-            return res.status(400).json({ success: false, error: "Brand with this title already exists" });
-        }
+      // Check if required fields are present
+      if (!brandTitle) {
+          return res.status(400).json({ success: false, error: "Brand title is required" });
+      }
 
-        // Create the brand
-        const brand = await OurBrandMain.create({ brandTitle });
+      // Create the brand
+      const brand = await OurBrandMain.create({ brandTitle });
 
-        res.status(201).json({ success: true, data: brand });
-    } catch (err) {
-        console.error("Error:", err);
-        res.status(400).json({ success: false, error: err.message });
-    }
+      res.status(201).json({ success: true, data: brand });
+  } catch (err) {
+      console.error("Error:", err);
+      res.status(400).json({ success: false, error: err.message });
+  }
 });
+
 
 const updateBrandMain = asyncHandler(async (req, res) => {
     try {

@@ -8,16 +8,16 @@ const createClientMain = asyncHandler(async (req, res) => {
     try {
         const { clientTitle, clientDescription } = req.body;
 
+        // Check if any client already exists
+        const existingClient = await ClientMain.findOne();
+
+        if (existingClient) {
+            return res.status(400).json({ success: false, error: "A client already exists, only one client can be created" });
+        }
+
         // Check if required fields are present
         if (!clientTitle) {
             return res.status(400).json({ success: false, error: "Client title is required" });
-        }
-
-        // Check if client with the same title already exists
-        const existingClient = await ClientMain.findOne({ clientTitle });
-
-        if (existingClient) {
-            return res.status(400).json({ success: false, error: "Client with this title already exists" });
         }
 
         // Create the client
@@ -32,6 +32,7 @@ const createClientMain = asyncHandler(async (req, res) => {
         res.status(400).json({ success: false, error: err.message });
     }
 });
+
 
 const updateClientMain = asyncHandler(async (req, res) => {
     try {

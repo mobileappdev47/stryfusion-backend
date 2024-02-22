@@ -6,16 +6,16 @@ const createExperienceMain = asyncHandler(async (req, res) => {
     try {
         const { experienceTitle, experienceDescription } = req.body;
 
+        // Check if any experience already exists
+        const existingExperience = await ExperienceMain.findOne();
+
+        if (existingExperience) {
+            return res.status(400).json({ success: false, error: "An experience already exists, only one experience can be created" });
+        }
+
         // Check if required fields are present
         if (!experienceTitle) {
             return res.status(400).json({ success: false, error: "Experience title is required" });
-        }
-
-        // Check if experience with the same title already exists
-        const existingExperience = await ExperienceMain.findOne({ experienceTitle });
-
-        if (existingExperience) {
-            return res.status(400).json({ success: false, error: "Experience with this title already exists" });
         }
 
         // Create the experience

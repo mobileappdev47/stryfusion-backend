@@ -8,16 +8,16 @@ const createProcessMain = asyncHandler(async (req, res) => {
     try {
         const { processTitle, processDescription } = req.body;
 
+        // Check if any process already exists
+        const existingProcess = await ProcessMain.findOne();
+
+        if (existingProcess) {
+            return res.status(400).json({ success: false, error: "A process already exists, only one process can be created" });
+        }
+
         // Check if required fields are present
         if (!processTitle) {
             return res.status(400).json({ success: false, error: "Process title is required" });
-        }
-
-        // Check if process with the same title already exists
-        const existingProcess = await ProcessMain.findOne({ processTitle });
-
-        if (existingProcess) {
-            return res.status(400).json({ success: false, error: "Process with this title already exists" });
         }
 
         // Create the process
@@ -32,6 +32,7 @@ const createProcessMain = asyncHandler(async (req, res) => {
         res.status(400).json({ success: false, error: err.message });
     }
 });
+
 
 const updateProcessMain = asyncHandler(async (req, res) => {
     try {
