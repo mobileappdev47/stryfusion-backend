@@ -57,15 +57,20 @@ const updateProductMain = asyncHandler(async (req, res) => {
 const getProductMain = asyncHandler(async (req, res) => {
     try {
         const product = await ProductMain.findOne(); // Retrieve the first product found in the database
+
+        // If no product main data is found, return a success response with a blank object
         if (!product) {
-            return res.status(404).json({ success: false, error: "Product not found" });
+            return res.status(200).json({ success: true, data: {} });
         }
+
+        // If product main data is found, return it in the response
         res.status(200).json({ success: true, data: product });
     } catch (err) {
         console.error("Error:", err);
         res.status(500).json({ success: false, error: err.message });
     }
 });
+
 
 const deleteProductMain = asyncHandler(async (req, res) => {
     try {

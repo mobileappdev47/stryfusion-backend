@@ -63,12 +63,20 @@ const updateProcessMain = asyncHandler(async (req, res) => {
 const getProcessMain = asyncHandler(async (req, res) => {
     try {
         const processes = await ProcessMain.findOne();
+
+        // If no process main data is found, return a success response with a blank object
+        if (!processes) {
+            return res.status(200).json({ success: true, data: {} });
+        }
+
+        // If process main data is found, return it in the response
         res.status(200).json({ success: true, data: processes });
     } catch (err) {
         console.error("Error:", err);
         res.status(500).json({ success: false, error: err.message });
     }
 });
+
 
 const deleteProcessMain = asyncHandler(async (req, res) => {
     try {

@@ -57,12 +57,20 @@ const updateBrandMain = asyncHandler(async (req, res) => {
 const getBrandsMain = asyncHandler(async (req, res) => {
     try {
         const brands = await OurBrandMain.findOne();
+
+        // If no brand main data is found, return a success response with a blank object
+        if (!brands) {
+            return res.status(200).json({ success: true, data: {} });
+        }
+
+        // If brand main data is found, return it in the response
         res.status(200).json({ success: true, data: brands });
     } catch (err) {
         console.error("Error:", err);
         res.status(500).json({ success: false, error: err.message });
     }
 });
+
 
 const deleteBrandMain = asyncHandler(async (req, res) => {
     try {

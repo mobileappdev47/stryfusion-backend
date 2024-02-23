@@ -63,6 +63,13 @@ const updateClientMain = asyncHandler(async (req, res) => {
 const getClientMain = asyncHandler(async (req, res) => {
     try {
         const clients = await ClientMain.findOne();
+
+        // If no client main data is found, return a success response with a blank object
+        if (!clients) {
+            return res.status(200).json({ success: true, data: {} });
+        }
+
+        // If client main data is found, return it in the response
         res.status(200).json({ success: true, data: clients });
     } catch (err) {
         console.error("Error:", err);

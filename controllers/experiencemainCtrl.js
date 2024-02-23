@@ -60,6 +60,13 @@ const updateExperienceMain = asyncHandler(async (req, res) => {
 const getExperienceMain = asyncHandler(async (req, res) => {
     try {
         const experiences = await ExperienceMain.findOne();
+
+        // If no experience main data is found, return a success response with a blank object
+        if (!experiences) {
+            return res.status(200).json({ success: true, data: {} });
+        }
+
+        // If experience main data is found, return it in the response
         res.status(200).json({ success: true, data: experiences });
     } catch (err) {
         console.error("Error:", err);

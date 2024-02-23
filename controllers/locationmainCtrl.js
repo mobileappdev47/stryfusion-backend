@@ -64,6 +64,13 @@ const updateLocationMain = asyncHandler(async (req, res) => {
 const getLocationMain = asyncHandler(async (req, res) => {
     try {
         const locations = await LocationMain.findOne();
+
+        // If no location main data is found, return a success response with a blank object
+        if (!locations) {
+            return res.status(200).json({ success: true, data: {} });
+        }
+
+        // If location main data is found, return it in the response
         res.status(200).json({ success: true, data: locations });
     } catch (err) {
         console.error("Error:", err);
