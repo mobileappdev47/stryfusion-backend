@@ -57,9 +57,9 @@ const updateProduct = async (req, res) => {
             const productImage = req.file.path;
             updateFields.productImage = productImage;
 
-            // Delete old image
+            // Delete old image if it exists
             const oldProduct = await Products.findById(productId);
-            if (oldProduct && oldProduct.productImage) {
+            if (oldProduct && oldProduct.productImage && fs.existsSync(oldProduct.productImage)) {
                 fs.unlinkSync(oldProduct.productImage);
             }
         }
@@ -98,7 +98,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
 
         // Find the product to delete and get the image path
         const productToDelete = await Products.findById(productId);
-        const imagePath = productToDelete.productImage;
+        const imagePath = productToDelete?.productImage;
 
         const deletedProduct = await Products.findByIdAndDelete(productId);
 
@@ -106,8 +106,8 @@ const deleteProduct = asyncHandler(async (req, res) => {
             return res.status(404).json({ success: false, error: "Product not found" });
         }
 
-        // Delete the image file
-        if (imagePath) {
+        // Delete the image file if it exists
+        if (imagePath && fs.existsSync(imagePath)) {
             fs.unlinkSync(imagePath);
         }
 

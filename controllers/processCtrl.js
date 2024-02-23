@@ -63,9 +63,9 @@ const updateProcess = async (req, res) => {
             const imagePath = req.file.path;
             updateFields.image = imagePath;
 
-            // Delete old image
+            // Delete old image if it exists
             const oldProcess = await Process.findById(processId);
-            if (oldProcess && oldProcess.image) {
+            if (oldProcess && oldProcess.image && fs.existsSync(oldProcess.image)) {
                 fs.unlinkSync(oldProcess.image);
             }
         }
@@ -102,7 +102,7 @@ const deleteProcess = asyncHandler(async (req, res) => {
 
         // Find the process to delete and get the image path
         const processToDelete = await Process.findById(processId);
-        const imagePath = processToDelete.image;
+        const imagePath = processToDelete?.image;
 
         const deletedProcess = await Process.findByIdAndDelete(processId);
 
@@ -110,8 +110,8 @@ const deleteProcess = asyncHandler(async (req, res) => {
             return res.status(404).json({ success: false, error: "Process not found" });
         }
 
-        // Delete the image file
-        if (imagePath) {
+        // Delete the image file if it exists
+        if (imagePath && fs.existsSync(imagePath)) {
             fs.unlinkSync(imagePath);
         }
 

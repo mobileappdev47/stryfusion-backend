@@ -42,7 +42,7 @@ const createClient = asyncHandler(async (req, res) => {
 });
 
 
-const updateClient =  asyncHandler(async (req, res) => {
+const updateClient = asyncHandler(async (req, res) => {
     try {
         const { clientId } = req.params;
         const { clientName, clientRole, clientReview } = req.body;
@@ -60,9 +60,9 @@ const updateClient =  asyncHandler(async (req, res) => {
             const clientImage = req.file.path;
             updateFields.clientImage = clientImage;
 
-            // Delete old image
+            // Delete old image if it exists
             const oldClient = await Client.findById(clientId);
-            if (oldClient && oldClient.clientImage) {
+            if (oldClient && oldClient.clientImage && fs.existsSync(oldClient.clientImage)) {
                 fs.unlinkSync(oldClient.clientImage);
             }
         }
@@ -81,7 +81,6 @@ const updateClient =  asyncHandler(async (req, res) => {
     }
 });
 
-
 const getAllClients = asyncHandler(async (req, res) => {
     try {
         const clients = await Client.find();
@@ -93,13 +92,13 @@ const getAllClients = asyncHandler(async (req, res) => {
 });
 
 
-const deleteClient = asyncHandler( async (req, res) => {
+const deleteClient = asyncHandler(async (req, res) => {
     try {
         const { clientId } = req.params;
 
         // Find the client to delete and get the image path
         const clientToDelete = await Client.findById(clientId);
-        const imagePath = clientToDelete.clientImage;
+        const imagePath = clientToDelete?.clientImage;
 
         const deletedClient = await Client.findByIdAndDelete(clientId);
 
@@ -107,8 +106,8 @@ const deleteClient = asyncHandler( async (req, res) => {
             return res.status(404).json({ success: false, error: "Client not found" });
         }
 
-        // Delete the image file
-        if (imagePath) {
+        // Delete the image file if it exists
+        if (imagePath && fs.existsSync(imagePath)) {
             fs.unlinkSync(imagePath);
         }
 

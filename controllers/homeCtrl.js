@@ -78,73 +78,77 @@ const getHome = asyncHandler(async (req, res) => {
 
 
 const updateHome = asyncHandler(async (req, res) => {
-    const { id } = req.params;
+  const { id } = req.params;
 
-    try {
-        const home = await Home.findById(id);
+  try {
+      const home = await Home.findById(id);
 
-        if (!home) {
-            return res.status(404).json({ success: false, code: 404, message: "Home not found" });
-        }
+      if (!home) {
+          return res.status(404).json({ success: false, code: 404, message: "Home not found" });
+      }
 
-        const { title } = req.body;
+      const { title } = req.body;
+      let newImages = [];
 
-        // Check if files are uploaded
-        if (!req.files || req.files.length === 0) {
-            // No files uploaded, update only the title
-            home.title = title;
-            await home.save();
+      // Check if files are uploaded
+      if (req.files && req.files.length > 0) {
+          // If files are uploaded, delete old images (if any)
+          for (const imagePath of home.images) {
+              if (fs.existsSync(imagePath)) {
+                  fs.unlinkSync(imagePath); // Delete the image file
+              }
+          }
+          // Store new images paths
+          newImages = req.files.map(file => file.path); // Store file paths instead of URLs
+      }
 
-            return res.status(200).json({ success: true, code: 200, message: "Home updated successfully", home });
-        }
+      // Update title and images
+      home.title = title;
+      home.images = newImages;
 
-        // Delete old images from the file system
-        for (const imagePath of home.images) {
-            fs.unlinkSync(imagePath); // Delete the image file
-        }
+      await home.save();
 
-        // Files are uploaded, update title and replace images
-        const newImages = req.files.map(file => file.path); // Store file paths instead of URLs
-        home.title = title;
-        home.images = newImages;
-
-        await home.save();
-
-        res.status(200).json({ success: true, code: 200, message: "Home updated successfully", home });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, code: 500, message: "Internal server error" });
-    }
+      res.status(200).json({ success: true, code: 200, message: "Home updated successfully", home });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ success: false, code: 500, message: "Internal server error" });
+  }
 });
+
 
 
 
 const deleteHome = asyncHandler(async (req, res) => {
-    const { id } = req.params;
+  const { id } = req.params;
 
-    try {
-        // Find the home record by ID
-        const home = await Home.findById(id);
+  try {
+      // Find the home record by ID
+      const home = await Home.findById(id);
 
-        if (!home) {
-            return res.status(404).json({ success: false, message: 'Home not found' });
-        }
+      if (!home) {
+          return res.status(404).json({ success: false, message: 'Home not found' });
+      }
 
-        // Delete the associated images from the file system
-        for (const imagePath of home.images) {
-            fs.unlinkSync(imagePath); // Delete the image file
-        }
+      // Delete the associated images from the file system if they exist
+      if (home.images && home.images.length > 0) {
+          for (const imagePath of home.images) {
+              if (fs.existsSync(imagePath)) {
+                  fs.unlinkSync(imagePath); // Delete the image file
+              }
+          }
+      }
 
-        // Delete the home record from the database
-        const deletedHome = await Home.findByIdAndDelete(id);
+      // Delete the home record from the database
+      const deletedHome = await Home.findByIdAndDelete(id);
 
-        // Return success response
-        res.json({ success: true, message: 'Home deleted successfully', deletedHome });
-    } catch (error) {
-        console.error('Error deleting home:', error);
-        res.status(500).json({ success: false, message: 'Internal server error' });
-    }
+      // Return success response
+      res.json({ success: true, message: 'Home deleted successfully', deletedHome });
+  } catch (error) {
+      console.error('Error deleting home:', error);
+      res.status(500).json({ success: false, message: 'Internal server error' });
+  }
 });
+
 
 
  module.exports = {upload, createHome,getHome, updateHome,deleteHome }

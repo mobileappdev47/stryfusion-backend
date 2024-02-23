@@ -58,6 +58,12 @@ const updateExperience = asyncHandler(async (req, res) => {
             // Construct the file path
             const experienceImage = req.file.path;
             updateFields.experienceImage = experienceImage;
+
+            // Delete old image if it exists
+            const oldExperience = await Experience.findById(experienceId);
+            if (oldExperience && oldExperience.experienceImage && fs.existsSync(oldExperience.experienceImage)) {
+                fs.unlinkSync(oldExperience.experienceImage);
+            }
         }
 
         // Update the experience
@@ -65,12 +71,6 @@ const updateExperience = asyncHandler(async (req, res) => {
 
         if (!updatedExperience) {
             return res.status(404).json({ success: false, error: "Experience not found" });
-        }
-
-        // Delete old image if it exists
-        const oldExperience = await Experience.findById(experienceId);
-        if (oldExperience && oldExperience.experienceImage) {
-            fs.unlinkSync(oldExperience.experienceImage);
         }
 
         res.status(200).json({ success: true, data: updatedExperience });
@@ -106,14 +106,9 @@ const deleteExperience = asyncHandler(async (req, res) => {
             return res.status(404).json({ success: false, error: "Experience not found" });
         }
 
-        // Attempt to delete the image file
-        if (imagePath) {
-            try {
-                fs.unlinkSync(imagePath);
-                console.log('Image file deleted successfully.');
-            } catch (err) {
-                console.error('Error deleting image file:', err);
-            }
+        // Attempt to delete the image file if it exists
+        if (imagePath && fs.existsSync(imagePath)) {
+            fs.unlinkSync(imagePath);
         }
 
         res.status(200).json({ success: true, data: {} });

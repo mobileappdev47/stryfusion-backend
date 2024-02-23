@@ -77,11 +77,21 @@ const deleteProductMain = asyncHandler(async (req, res) => {
             return res.status(404).json({ success: false, error: "Product not found" });
         }
 
+        // Check if associated images exist and delete them
+        if (deletedProduct.images && deletedProduct.images.length > 0) {
+            for (const imagePath of deletedProduct.images) {
+                if (fs.existsSync(imagePath)) {
+                    fs.unlinkSync(imagePath); // Delete the image file
+                }
+            }
+        }
+
         res.status(200).json({ success: true, data: {} });
     } catch (err) {
         console.error("Error:", err);
         res.status(400).json({ success: false, error: err.message });
     }
 });
+
 
 module.exports = { createProductMain, getProductMain, updateProductMain, deleteProductMain };

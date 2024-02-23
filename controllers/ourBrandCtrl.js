@@ -76,67 +76,71 @@ const getOurBrands = asyncHandler(async (req, res) => {
 
 
 const updateOurBrands = asyncHandler(async (req, res) => {
-    const { id } = req.params;
+  const { id } = req.params;
 
-    try {
-        const brand = await OurBrands.findById(id);
+  try {
+      const brand = await OurBrands.findById(id);
 
-        if (!brand) {
-            return res.status(404).json({ success: false, code: 404, message: "Brand not found" });
-        }
+      if (!brand) {
+          return res.status(404).json({ success: false, code: 404, message: "Brand not found" });
+      }
 
-        // Check if files are uploaded
-        if (!req.files || req.files.length === 0) {
-            await brand.save();
+      // Check if files are uploaded
+      if (!req.files || req.files.length === 0) {
+          await brand.save();
 
-            return res.status(200).json({ success: true, code: 200, message: "Brand updated successfully", brand });
-        }
+          return res.status(200).json({ success: true, code: 200, message: "Brand updated successfully", brand });
+      }
 
-        // Delete old images from the file system
-        for (const imagePath of brand.brandImages) {
-            fs.unlinkSync(imagePath); // Delete the image file
-        }
+      // Delete old images from the file system if they exist
+      for (const imagePath of brand.brandImages) {
+          if (fs.existsSync(imagePath)) {
+              fs.unlinkSync(imagePath); // Delete the image file
+          }
+      }
 
-        // Files are uploaded, update title and replace images
-        const newImages = req.files.map(file => file.path); 
-        brand.brandImages = newImages;
+      // Files are uploaded, update title and replace images
+      const newImages = req.files.map(file => file.path); 
+      brand.brandImages = newImages;
 
-        await brand.save();
+      await brand.save();
 
-        res.status(200).json({ success: true, code: 200, message: "Brand updated successfully", brand });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, code: 500, message: "Internal server error" });
-    }
+      res.status(200).json({ success: true, code: 200, message: "Brand updated successfully", brand });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ success: false, code: 500, message: "Internal server error" });
+  }
 });
 
 
 
 const deleteOurBrands = asyncHandler(async (req, res) => {
-    const { id } = req.params;
+  const { id } = req.params;
 
-    try {
-        // Find the home record by ID
-        const brand = await OurBrands.findById(id);
+  try {
+      // Find the brand record by ID
+      const brand = await OurBrands.findById(id);
 
-        if (!brand) {
-            return res.status(404).json({ success: false, message: 'Brand not found' });
-        }
+      if (!brand) {
+          return res.status(404).json({ success: false, message: 'Brand not found' });
+      }
 
-        // Delete the associated images from the file system
-        for (const imagePath of brand.brandImages) {
-            fs.unlinkSync(imagePath); // Delete the image file
-        }
+      // Delete the associated images from the file system if they exist
+      for (const imagePath of brand.brandImages) {
+          if (fs.existsSync(imagePath)) {
+              fs.unlinkSync(imagePath); // Delete the image file
+          }
+      }
 
-        // Delete the home record from the database
-        const deletedBrand = await OurBrands.findByIdAndDelete(id);
+      // Delete the brand record from the database
+      const deletedBrand = await OurBrands.findByIdAndDelete(id);
 
-        // Return success response
-        res.json({ success: true, message: 'Brand deleted successfully', deletedBrand });
-    } catch (error) {
-        console.error('Error deleting brand:', error);
-        res.status(500).json({ success: false, message: 'Internal server error' });
-    }
+      // Return success response
+      res.json({ success: true, message: 'Brand deleted successfully', deletedBrand });
+  } catch (error) {
+      console.error('Error deleting brand:', error);
+      res.status(500).json({ success: false, message: 'Internal server error' });
+  }
 });
 
 
