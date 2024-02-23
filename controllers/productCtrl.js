@@ -84,12 +84,18 @@ const updateProduct = async (req, res) => {
 const getProduct = asyncHandler(async (req, res) => {
     try {
         const products = await Products.find();
+        // If no products are found, return a success response with an empty array
+        if (!products || products.length === 0) {
+            return res.status(200).json({ success: true, data: [] });
+        }
+        // If products are found, return them in the response
         res.status(200).json({ success: true, data: products });
     } catch (err) {
         console.error("Error:", err);
         res.status(500).json({ success: false, error: err.message });
     }
 });
+
 
 
 const deleteProduct = asyncHandler(async (req, res) => {

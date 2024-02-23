@@ -53,15 +53,23 @@ const updateLocation = asyncHandler (async(req, res) => {
     }
 })     
 
-const getLocations = asyncHandler(async(req, res) => {
+const getLocations = asyncHandler(async (req, res) => {
     try {
         const locations = await Locations.find();
+
+        // If no locations are found, return a success response with an empty array
+        if (!locations || locations.length === 0) {
+            return res.status(200).json({ success: true, data: [] });
+        }
+
+        // If locations are found, return them in the response
         res.status(200).json({ success: true, data: locations });
     } catch (err) {
         console.error("Error:", err);
         res.status(500).json({ success: false, error: err.message });
     }
-})
+});
+
 
 const deleteLocation = asyncHandler(async( req, res) => {
     try {

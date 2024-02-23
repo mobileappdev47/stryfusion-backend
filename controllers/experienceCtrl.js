@@ -85,12 +85,20 @@ const updateExperience = asyncHandler(async (req, res) => {
 const getAllExperiences = asyncHandler(async (req, res) => {
     try {
         const experiences = await Experience.find();
+
+        // If no experiences are found, return a success response with an empty array
+        if (!experiences || experiences.length === 0) {
+            return res.status(200).json({ success: true, data: [] });
+        }
+
+        // If experiences are found, return them in the response
         res.status(200).json({ success: true, data: experiences });
     } catch (err) {
         console.error("Error:", err);
         res.status(500).json({ success: false, error: err.message });
     }
 });
+
 
 const deleteExperience = asyncHandler(async (req, res) => {
     try {

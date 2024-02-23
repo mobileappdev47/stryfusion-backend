@@ -55,23 +55,22 @@ const storage = multer.diskStorage({
 
 
 
-const getOurBrands = asyncHandler(async (req, res) => {
+  const getOurBrands = asyncHandler(async (req, res) => {
     try {
-        // Find the home in the database
+        // Find the brand in the database
         const brand = await OurBrands.findOne();
-
-        // If no home is found, return a 404 status code with a message
+        // If no brand is found, return a success response with a blank object
         if (!brand) {
-            return res.status(404).json({ success: false, code: 404, message: "No brand found" });
+            return res.status(200).json({ success: true, code: 200, message: "No brand found", brand: {} });
         }
-
-        // If a home is found, return it in the response
-        res.status(200).json({ success: true, code: 200, message: "brand found", brand });
+        // If a brand is found, return it in the response
+        res.status(200).json({ success: true, code: 200, message: "Brand found", brand });
     } catch (error) {
         console.error(error);
         res.status(500).json({ success: false, code: 500, message: "Internal server error" });
     }
 });
+
 
 
 

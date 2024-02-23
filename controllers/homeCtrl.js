@@ -57,14 +57,14 @@ const storage = multer.diskStorage({
 
 
 
-const getHome = asyncHandler(async (req, res) => {
+  const getHome = asyncHandler(async (req, res) => {
     try {
         // Find the home in the database
         const home = await Home.findOne();
 
-        // If no home is found, return a 404 status code with a message
+        // If no home is found, return a success response with a blank object
         if (!home) {
-            return res.status(404).json({ success: false, code: 404, message: "No home found" });
+            return res.status(200).json({ success: true, code: 200, message: "No home found", home: {} });
         }
 
         // If a home is found, return it in the response
@@ -74,6 +74,7 @@ const getHome = asyncHandler(async (req, res) => {
         res.status(500).json({ success: false, code: 500, message: "Internal server error" });
     }
 });
+
 
 
 

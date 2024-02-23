@@ -84,6 +84,13 @@ const updateClient = asyncHandler(async (req, res) => {
 const getAllClients = asyncHandler(async (req, res) => {
     try {
         const clients = await Client.find();
+
+        // If no clients are found, return a success response with an empty array
+        if (!clients || clients.length === 0) {
+            return res.status(200).json({ success: true, data: [] });
+        }
+
+        // If clients are found, return them in the response
         res.status(200).json({ success: true, data: clients });
     } catch (err) {
         console.error("Error:", err);

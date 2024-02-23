@@ -88,12 +88,20 @@ const updateProcess = async (req, res) => {
 const getProcess = asyncHandler(async (req, res) => {
     try {
         const processes = await Process.find();
+
+        // If no processes are found, return a success response with an empty array
+        if (!processes || processes.length === 0) {
+            return res.status(200).json({ success: true, data: [] });
+        }
+
+        // If processes are found, return them in the response
         res.status(200).json({ success: true, data: processes });
     } catch (err) {
         console.error("Error:", err);
         res.status(500).json({ success: false, error: err.message });
     }
 });
+
 
 
 const deleteProcess = asyncHandler(async (req, res) => {
