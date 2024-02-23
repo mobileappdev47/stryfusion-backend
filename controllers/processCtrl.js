@@ -5,23 +5,23 @@ const fs = require('fs');
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, "uploads/"); // Save uploaded files to the 'uploads' directory
+        cb(null, "uploads/"); // Save uploaded files to the 'uploads' directory
     },
     filename: function (req, file, cb) {
-      cb(null, Date.now() + "-" + file.originalname); // Rename the file with a unique name
+        cb(null, Date.now() + "-" + file.originalname); // Rename the file with a unique name
     },
-  });
+});
 
 
-  const upload = multer({ storage: storage });
+const upload = multer({ storage: storage });
 
-  const createProcess = async (req, res) => {
+const createProcess = async (req, res) => {
     try {
         const { title, description } = req.body;
 
         // Check if required fields are present
         if (!title || !description) {
-            return res.status(400).json({ success: false, error: "Title and description are required" });
+            return res.status(400).json({ success: false,code:400, message: "Title and description are required" });
         }
 
         let imagePath = "";
@@ -38,10 +38,10 @@ const storage = multer.diskStorage({
             image: imagePath
         });
 
-        res.status(201).json({ success: true, data: process });
+        res.status(201).json({ success: true,code:201, data: process });
     } catch (err) {
         console.error("Error:", err);
-        res.status(400).json({ success: false, error: err.message });
+        res.status(400).json({ success: false,code:400, message: err.message });
     }
 };
 
@@ -74,13 +74,13 @@ const updateProcess = async (req, res) => {
         const updatedProcess = await Process.findByIdAndUpdate(processId, updateFields, { new: true });
 
         if (!updatedProcess) {
-            return res.status(404).json({ success: false, error: "Process not found" });
+            return res.status(404).json({ success: false,code:404, message: "Process not found" });
         }
 
-        res.status(200).json({ success: true, data: updatedProcess });
+        res.status(200).json({ success: true,code:200, data: updatedProcess });
     } catch (err) {
         console.error("Error:", err);
-        res.status(400).json({ success: false, error: err.message });
+        res.status(400).json({ success: false,code:400, message: err.message });
     }
 };
 
@@ -91,14 +91,14 @@ const getProcess = asyncHandler(async (req, res) => {
 
         // If no processes are found, return a success response with an empty array
         if (!processes || processes.length === 0) {
-            return res.status(200).json({ success: true, data: [] });
+            return res.status(200).json({ success: true, code: 200, data: [] });
         }
 
         // If processes are found, return them in the response
-        res.status(200).json({ success: true, data: processes });
+        res.status(200).json({ success: true, code: 200, data: processes });
     } catch (err) {
         console.error("Error:", err);
-        res.status(500).json({ success: false, error: err.message });
+        res.status(500).json({ success: false, code: 500, message: err.message });
     }
 });
 
@@ -115,7 +115,7 @@ const deleteProcess = asyncHandler(async (req, res) => {
         const deletedProcess = await Process.findByIdAndDelete(processId);
 
         if (!deletedProcess) {
-            return res.status(404).json({ success: false, error: "Process not found" });
+            return res.status(404).json({ success: false, code: 404, message: "Process not found" });
         }
 
         // Delete the image file if it exists
@@ -123,10 +123,10 @@ const deleteProcess = asyncHandler(async (req, res) => {
             fs.unlinkSync(imagePath);
         }
 
-        res.status(200).json({ success: true, data: {} });
+        res.status(200).json({ success: true, code: 200, data: {} });
     } catch (err) {
         console.error("Error:", err);
-        res.status(400).json({ success: false, error: err.message });
+        res.status(400).json({ success: false, code: 400, message: err.message });
     }
 });
 

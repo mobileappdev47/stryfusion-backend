@@ -2,20 +2,20 @@ const asyncHandler = require("express-async-handler");
 const Contact = require('../models/contactModel')
 const ContactForm = require('../models/contactFormModel')
 const nodemailer = require("nodemailer");
- const sendEmail = require('../utils/email')
+const sendEmail = require('../utils/email')
 
 const createContact = asyncHandler(async (req, res) => {
     try {
         const existingContact = await Contact.findOne();
         if (existingContact) {
-            return res.status(400).json({ success: false, error: "Contact details already exist" });
+            return res.status(400).json({ success: false, code: 400, message: "Contact details already exist" });
         }
 
         const { mainTitle, mainDescription, email, phone, address } = req.body;
 
         // Check if required fields are present
         if (!mainTitle || !mainDescription || !email || !phone || !address) {
-            return res.status(400).json({ success: false, error: "All contact fields are required" });
+            return res.status(400).json({ success: false, code: 400, message: "All contact fields are required" });
         }
 
         // Create the contact details
@@ -27,10 +27,10 @@ const createContact = asyncHandler(async (req, res) => {
             address
         });
 
-        res.status(201).json({ success: true, data: contact });
+        res.status(201).json({ success: true, code: 201, data: contact });
     } catch (err) {
         console.error("Error:", err);
-        res.status(400).json({ success: false, error: err.message });
+        res.status(400).json({ success: false, code: 400, message: err.message });
     }
 });
 
@@ -39,12 +39,12 @@ const getContact = asyncHandler(async (req, res) => {
     try {
         const contact = await Contact.findOne();
         if (!contact) {
-            return res.status(404).json({ success: false, error: "Contact details not found" });
+            return res.status(404).json({ success: false, code: 404, message: "Contact details not found" });
         }
-        res.status(200).json({ success: true, data: contact });
+        res.status(200).json({ success: true, code: 200, data: contact });
     } catch (err) {
         console.error("Error:", err);
-        res.status(500).json({ success: false, error: err.message });
+        res.status(500).json({ success: false, code: 500, message: err.message });
     }
 });
 
@@ -53,14 +53,14 @@ const updateContact = asyncHandler(async (req, res) => {
     try {
         const existingContact = await Contact.findOne();
         if (!existingContact) {
-            return res.status(404).json({ success: false, error: "Contact details not found" });
+            return res.status(404).json({ success: false, code: 404, message: "Contact details not found" });
         }
 
         const { mainTitle, mainDescription, email, phone, address } = req.body;
 
         // Check if required fields are present
         if (!mainTitle || !mainDescription || !email || !phone || !address) {
-            return res.status(400).json({ success: false, error: "All contact fields are required" });
+            return res.status(400).json({ success: false, code: 400, message: "All contact fields are required" });
         }
 
         // Update the contact details
@@ -72,10 +72,10 @@ const updateContact = asyncHandler(async (req, res) => {
             address
         }, { new: true });
 
-        res.status(200).json({ success: true, data: updatedContact });
+        res.status(200).json({ success: true, code: 200, data: updatedContact });
     } catch (err) {
         console.error("Error:", err);
-        res.status(400).json({ success: false, error: err.message });
+        res.status(400).json({ success: false, code: 400, message: err.message });
     }
 });
 
@@ -84,14 +84,14 @@ const deleteContact = asyncHandler(async (req, res) => {
     try {
         const existingContact = await Contact.findOne();
         if (!existingContact) {
-            return res.status(404).json({ success: false, error: "Contact details not found" });
+            return res.status(404).json({ success: false, code: 404, message: "Contact details not found" });
         }
 
         const deletedContact = await Contact.findOneAndDelete();
-        res.status(200).json({ success: true, data: {} });
+        res.status(200).json({ success: true, code: 200, data: {} });
     } catch (err) {
         console.error("Error:", err);
-        res.status(400).json({ success: false, error: err.message });
+        res.status(400).json({ success: false, code: 400, message: err.message });
     }
 });
 
@@ -119,7 +119,7 @@ const contactFormSubmit = asyncHandler(async (req, res) => {
         // Log the error for debugging purposes
         console.error("Error:", error);
         // Send an error response with a more descriptive message
-        res.status(500).json({ error: "Failed to send email. Please try again later." });
+        res.status(500).json({ message: "Failed to send email. Please try again later." });
     }
 });
 

@@ -17,13 +17,13 @@ const upload = multer({ storage: storage });
 
 
 
-const createExperience = asyncHandler (async (req, res) => {
+const createExperience = asyncHandler(async (req, res) => {
     try {
         const { experienceTitle, experienceDescription } = req.body;
 
         // Check if required fields are present
         if (!experienceTitle || !experienceDescription) {
-            return res.status(400).json({ success: false, error: "Experience title and description are required" });
+            return res.status(400).json({ success: false, code: 400, message: "Experience title and description are required" });
         }
 
         // Create the experience
@@ -33,10 +33,10 @@ const createExperience = asyncHandler (async (req, res) => {
             experienceImage: req.file ? req.file.path : null
         });
 
-        res.status(201).json({ success: true, data: experience });
+        res.status(201).json({ success: true, code: 201, data: experience });
     } catch (err) {
         console.error("Error:", err);
-        res.status(400).json({ success: false, error: err.message });
+        res.status(400).json({ success: false, code: 400, message: err.message });
     }
 });
 
@@ -48,7 +48,7 @@ const updateExperience = asyncHandler(async (req, res) => {
 
         // Check if required fields are present
         if (!experienceTitle || !experienceDescription) {
-            return res.status(400).json({ success: false, error: "Experience title and description are required" });
+            return res.status(400).json({ success: false, code: 400, message: "Experience title and description are required" });
         }
 
         let updateFields = { experienceTitle, experienceDescription };
@@ -70,13 +70,13 @@ const updateExperience = asyncHandler(async (req, res) => {
         const updatedExperience = await Experience.findByIdAndUpdate(experienceId, updateFields, { new: true });
 
         if (!updatedExperience) {
-            return res.status(404).json({ success: false, error: "Experience not found" });
+            return res.status(404).json({ success: false, code: 404, message: "Experience not found" });
         }
 
-        res.status(200).json({ success: true, data: updatedExperience });
+        res.status(200).json({ success: true, code: 200, data: updatedExperience });
     } catch (err) {
         console.error("Error:", err);
-        res.status(400).json({ success: false, error: err.message });
+        res.status(400).json({ success: false, code: 400, message: err.message });
     }
 });
 
@@ -88,14 +88,14 @@ const getAllExperiences = asyncHandler(async (req, res) => {
 
         // If no experiences are found, return a success response with an empty array
         if (!experiences || experiences.length === 0) {
-            return res.status(200).json({ success: true, data: [] });
+            return res.status(200).json({ success: true, code: 200, data: [] });
         }
 
         // If experiences are found, return them in the response
         res.status(200).json({ success: true, data: experiences });
     } catch (err) {
         console.error("Error:", err);
-        res.status(500).json({ success: false, error: err.message });
+        res.status(500).json({ success: false, code: 500, message: err.message });
     }
 });
 
@@ -111,7 +111,7 @@ const deleteExperience = asyncHandler(async (req, res) => {
         const deletedExperience = await Experience.findByIdAndDelete(experienceId);
 
         if (!deletedExperience) {
-            return res.status(404).json({ success: false, error: "Experience not found" });
+            return res.status(404).json({ success: false, code: 404, message: "Experience not found" });
         }
 
         // Attempt to delete the image file if it exists
@@ -119,13 +119,13 @@ const deleteExperience = asyncHandler(async (req, res) => {
             fs.unlinkSync(imagePath);
         }
 
-        res.status(200).json({ success: true, data: {} });
+        res.status(200).json({ success: true, code: 200, data: {} });
     } catch (err) {
         console.error("Error:", err);
-        res.status(400).json({ success: false, error: err.message });
+        res.status(400).json({ success: false, code: 400, message: err.message });
     }
 });
 
 
 
-module.exports = {upload, createExperience, updateExperience, getAllExperiences, deleteExperience}
+module.exports = { upload, createExperience, updateExperience, getAllExperiences, deleteExperience }

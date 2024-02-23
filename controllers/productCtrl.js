@@ -21,7 +21,7 @@ const createProduct = async (req, res) => {
 
         // Check if required fields are present
         if (!productTitle || !req.file) {
-            return res.status(400).json({ success: false, error: "Product title and image are required" });
+            return res.status(400).json({ success: false, code: 400, message: "Product title and image are required" });
         }
 
         const productImage = req.file.path;
@@ -32,10 +32,10 @@ const createProduct = async (req, res) => {
             productImage
         });
 
-        res.status(201).json({ success: true, data: product });
+        res.status(201).json({ success: true, code: 201, data: product });
     } catch (err) {
         console.error("Error:", err);
-        res.status(400).json({ success: false, error: err.message });
+        res.status(400).json({ success: false, code: 400, message: "Internal server error" });
     }
 };
 
@@ -46,7 +46,7 @@ const updateProduct = async (req, res) => {
 
         // Check if required fields are present
         if (!productTitle) {
-            return res.status(400).json({ success: false, error: "Product title is required" });
+            return res.status(400).json({ success: false, code: 400, message: "Product title is required" });
         }
 
         let updateFields = { productTitle };
@@ -68,13 +68,13 @@ const updateProduct = async (req, res) => {
         const updatedProduct = await Products.findByIdAndUpdate(productId, updateFields, { new: true });
 
         if (!updatedProduct) {
-            return res.status(404).json({ success: false, error: "Product not found" });
+            return res.status(404).json({ success: false, code: 400, message: "Product not found" });
         }
 
-        res.status(200).json({ success: true, data: updatedProduct });
+        res.status(200).json({ success: true, code: 200, data: updatedProduct });
     } catch (err) {
         console.error("Error:", err);
-        res.status(400).json({ success: false, error: err.message });
+        res.status(400).json({ success: false, code: 400, message: err.message });
     }
 };
 
@@ -86,13 +86,13 @@ const getProduct = asyncHandler(async (req, res) => {
         const products = await Products.find();
         // If no products are found, return a success response with an empty array
         if (!products || products.length === 0) {
-            return res.status(200).json({ success: true, data: [] });
+            return res.status(200).json({ success: true, code: 200, data: [] });
         }
         // If products are found, return them in the response
-        res.status(200).json({ success: true, data: products });
+        res.status(200).json({ success: true, code: 200, data: products });
     } catch (err) {
         console.error("Error:", err);
-        res.status(500).json({ success: false, error: err.message });
+        res.status(500).json({ success: false, code: 500, message: err.message });
     }
 });
 
@@ -109,7 +109,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
         const deletedProduct = await Products.findByIdAndDelete(productId);
 
         if (!deletedProduct) {
-            return res.status(404).json({ success: false, error: "Product not found" });
+            return res.status(404).json({ success: false, code: 404, message: "Product not found" });
         }
 
         // Delete the image file if it exists
@@ -117,10 +117,10 @@ const deleteProduct = asyncHandler(async (req, res) => {
             fs.unlinkSync(imagePath);
         }
 
-        res.status(200).json({ success: true, data: {} });
+        res.status(200).json({ success: true, code: 200, data: {} });
     } catch (err) {
         console.error("Error:", err);
-        res.status(400).json({ success: false, error: err.message });
+        res.status(400).json({ success: false, code: 200, message: err.message });
     }
 });
 
