@@ -38,9 +38,11 @@ const createContact = asyncHandler(async (req, res) => {
 const getContact = asyncHandler(async (req, res) => {
     try {
         const contact = await Contact.findOne();
+        // If no contact details are found, return a success response with a blank object
         if (!contact) {
-            return res.status(404).json({ success: false, code: 404, message: "Contact details not found" });
+            return res.status(200).json({ success: true, code: 200, data: {} });
         }
+        // If contact details are found, return them in the response
         res.status(200).json({ success: true, code: 200, data: contact });
     } catch (err) {
         console.error("Error:", err);
