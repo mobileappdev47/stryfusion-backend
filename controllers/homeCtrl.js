@@ -117,8 +117,6 @@ const updateHome = asyncHandler(async (req, res) => {
 });
 
 
-
-
 const deleteHome = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
@@ -138,7 +136,6 @@ const deleteHome = asyncHandler(async (req, res) => {
         }
       }
     }
-
     // Delete the home record from the database
     const deletedHome = await Home.findByIdAndDelete(id);
 

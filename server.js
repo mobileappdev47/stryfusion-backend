@@ -19,9 +19,17 @@ const experiencemainRouter = require('./routes/experiencemainRoute.js')
 const clientRouter = require('./routes/clientRoute.js')
 const clientmainRouter = require('./routes/clientmainRoute.js')
 const contactRouer = require('./routes/contactRoute.js')
+const userRouter = require('./routes/userRoute.js')
 
 const { notFound, errorHandler } = require('./middlewares/errorHandlers.js');
 dbConnect();
+
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  next();
+});
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -55,6 +63,7 @@ app.use('/clientmain', clientmainRouter)
 
 app.use('/contact', contactRouer)
 
+app.use('/user', userRouter)
 
 app.use(notFound);
 app.use(errorHandler);
