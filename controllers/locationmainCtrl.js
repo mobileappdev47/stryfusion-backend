@@ -1,6 +1,4 @@
 const asyncHandler = require('express-async-handler');
-const multer = require('multer');
-const fs = require('fs');
 const LocationMain = require('../models/locationmainModel');
 
 
