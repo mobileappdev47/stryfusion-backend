@@ -37,35 +37,39 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use('/uploads', express.static('uploads'));
+app.use('/api/uploads', express.static('uploads'));
 
-app.use('/home', homeRouter);
+app.use('/api/home', homeRouter);
 
-app.use('/ourbrands', ourbrandsRouter);
-app.use('/ourbrandsmain', ourbrandsmainRouter)
+app.use('/api/ourbrands', ourbrandsRouter);
+app.use('/api/ourbrandsmain', ourbrandsmainRouter)
 
-app.use('/process', processRouter);
-app.use('/processmain', processmainRouter)
+app.use('/api/process', processRouter);
+app.use('/api/processmain', processmainRouter)
 
-app.use('/product', productRouter);
-app.use('/productmain', productmainRouter);
+app.use('/api/product', productRouter);
+app.use('/api/productmain', productmainRouter);
 
-app.use('/location', locationRouter)
-app.use('/locationmain', locationmainRouter)
+app.use('/api/location', locationRouter)
+app.use('/api/locationmain', locationmainRouter)
 
-app.use('/experience', experienceRouter)
-app.use('/experiencemain', experiencemainRouter)
+app.use('/api/experience', experienceRouter)
+app.use('/api/experiencemain', experiencemainRouter)
 
-app.use('/revolution', revolutionRouter)
+app.use('/api/revolution', revolutionRouter)
 
-app.use('/client', clientRouter)
-app.use('/clientmain', clientmainRouter)
+app.use('/api/client', clientRouter)
+app.use('/api/clientmain', clientmainRouter)
 
-app.use('/contact', contactRouer)
+app.use('/api/contact', contactRouer)
 
-app.use('/possible', possibleRouter);
+app.use('/api/possible', possibleRouter);
 
-app.use('/user', userRouter)
+app.use('/api/user', userRouter)
+
+app.get('*', (req, res) => {
+  
+})
 
 app.use(notFound);
 app.use(errorHandler);
