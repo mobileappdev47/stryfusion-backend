@@ -39,10 +39,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use('/uploads', express.static('uploads'));
 
-app.get('/', async(req, res) => {
-  res.send('hello from server');
-});
-
 app.use('/home', homeRouter);
 
 app.use('/ourbrands', ourbrandsRouter);
